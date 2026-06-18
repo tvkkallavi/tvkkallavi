@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ 'செயல்பாடு திருத்து' if act else 'புதிய செயல்பாடு' }} – TVK கல்லாவி{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container-narrow" style="max-width:760px">
+    <a href="{{ url_for('gallery') }}" style="font-size:.9rem">← படத்தொகுப்பு / Gallery</a>
+    <h2 style="margin:6px 0 14px">{{ 'செயல்பாடு திருத்து / Edit Activity' if act else 'புதிய செயல்பாடு / New Activity' }}</h2>
+
+    <form method="post" enctype="multipart/form-data" class="form-card"
+          action="{{ url_for('activity_edit', aid=act.id) if act else url_for('activity_new') }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <div class="row g-3">
+        <div class="col-md-7"><label class="form-label">தலைப்பு / Title <span class="req">*</span></label>
+          <input class="form-control" name="title" required value="{{ act.title if act else '' }}"></div>
+        <div class="col-md-5"><label class="form-label">வகை / Category <span class="req">*</span></label>
+          <select class="form-select" name="activity_type" required>
+            {% for key, en, ta, emo in ACTIVITY_TYPES %}
+            <option value="{{ key }}" {{ 'selected' if act and act.activity_type==key }}>{{ emo }} {{ ta }} · {{ en }}</option>
+            {% endfor %}
+          </select></div>
+        <div class="col-md-4"><label class="form-label">தேதி / Date</label>
+          <input class="form-control" type="date" name="activity_date" value="{{ act.activity_date if act else '' }}"></div>
+        <div class="col-md-5"><label class="form-label">இடம் / Location</label>
+          <input class="form-control" name="location" placeholder="Kallavi" value="{{ act.location if act else '' }}"></div>
+        <div class="col-md-3"><label class="form-label">தொண்டர்கள் / Volunteers</label>
+          <input class="form-control" type="number" min="0" name="volunteers_participated"
+                 value="{{ act.volunteers_participated if act and act.volunteers_participated is not none else '' }}"></div>
+        <div class="col-12"><label class="form-label">விவரம் / Description</label>
+          <textarea class="form-control" name="description" rows="3">{{ act.description if act else '' }}</textarea></div>
+        <div class="col-12"><label class="form-label">படங்கள் / Photos (multiple)</label>
+          <input class="form-control" type="file" name="photos" accept="image/*" multiple></div>
+      </div>
+
+      {% if act and photos %}
+      <div style="margin-top:16px">
+        <div class="form-label">தற்போதைய படங்கள் / Current photos</div>
+        <div class="edit-photo-grid">
+          {% for p in photos %}
+          <div class="edit-photo">
+            <img src="{{ url_for('static', filename=p.file_path) }}" alt="">
+            <button type="submit" class="ph-del" title="Remove"
+                    formaction="{{ url_for('activity_photo_delete', aid=act.id, pid=p.id) }}"
+                    formnovalidate onclick="return confirm('Remove this photo?')">×</button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <button class="btn-tvk" style="margin-top:16px">{{ 'புதுப்பி / Update' if act else 'சமர்ப்பி / Submit' }}</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

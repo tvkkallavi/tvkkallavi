@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}தொண்டர்கள் – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='volunteers' %}{% include "admin/_sidebar.html" with context %}
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <h2 style="margin:0">தொண்டர்கள் / Volunteers</h2>
+      <a class="btn-tvk" href="{{ url_for('admin_volunteer_new') }}">➕ புதிய தொண்டர்</a>
+    </div>
+
+    <form class="card-tvk p-3 mb-3" method="get">
+      <div class="d-flex gap-2">
+        <input class="form-control" name="q" value="{{ q }}" placeholder="Name, mobile, ID, ward, street">
+        <button class="btn-tvk">தேடு</button>
+      </div>
+    </form>
+
+    <div class="card-tvk p-0" style="overflow-x:auto">
+      <table class="table-tvk">
+        <thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Ward</th><th>Complaints</th><th>Activities</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for v in rows %}
+          <tr>
+            <td><strong>{{ v.volunteer_code }}</strong></td>
+            <td>{{ v.full_name }}</td>
+            <td>{{ v.mobile }}</td>
+            <td>{{ v.ward_no or '–' }}</td>
+            <td>{{ v.total_complaints or 0 }}</td>
+            <td>{{ v.total_activities or 0 }}</td>
+            <td><span class="badge-status {{ 's-resolved' if v.is_active else 's-rejected' }}">{{ 'Active' if v.is_active else 'Inactive' }}</span></td>
+            <td><a class="btn-ghost" style="padding:.3rem .7rem" href="{{ url_for('admin_volunteer_detail', vid=v.id) }}">பார்</a></td>
+          </tr>
+          {% else %}<tr><td colspan="8" style="color:var(--muted)">தொண்டர்கள் இல்லை.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}புகார்கள் – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='complaints' %}{% include "admin/_sidebar.html" with context %}
+  <main class="content">
+    <h2 style="margin:0 0 12px">புகார்கள் / Complaints</h2>
+
+    <form class="card-tvk p-3 mb-3" method="get">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-3"><label class="form-label">தேடல் / Search</label>
+          <input class="form-control" name="q" value="{{ f.q }}" placeholder="ID, name, mobile"></div>
+        <div class="col-md-2"><label class="form-label">நிலை</label>
+          <select class="form-select" name="status">
+            <option value="">All</option>
+            {% for s in ['pending','in_progress','resolved','closed','rejected'] %}
+            <option value="{{ s }}" {{ 'selected' if f.status==s }}>{{ s.replace('_',' ').title() }}</option>{% endfor %}
+          </select></div>
+        <div class="col-md-2"><label class="form-label">வகை</label>
+          <select class="form-select" name="category">
+            <option value="">All</option>
+            {% for c in cats %}<option value="{{ c.slug }}" {{ 'selected' if f.category==c.slug }}>{{ c.name_en }}</option>{% endfor %}
+          </select></div>
+        <div class="col-md-2"><label class="form-label">வார்டு / Ward</label>
+          <input class="form-control" name="ward" value="{{ f.ward }}"></div>
+        <div class="col-md-2"><label class="form-label">பார்வை</label>
+          <select class="form-select" name="archived">
+            <option value="0" {{ 'selected' if f.archived=='0' }}>Active</option>
+            <option value="1" {{ 'selected' if f.archived=='1' }}>Archived</option>
+          </select></div>
+        <div class="col-md-1"><button class="btn-tvk w-100">→</button></div>
+      </div>
+    </form>
+
+    <div class="card-tvk p-0" style="overflow-x:auto">
+      <table class="table-tvk">
+        <thead><tr><th>Tracking ID</th><th>Citizen</th><th>Mobile</th><th>Category</th><th>Ward</th><th>Status</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+          {% for c in rows %}
+          <tr>
+            <td><strong>{{ c.tracking_id }}</strong></td>
+            <td>{{ c.citizen_name }}</td>
+            <td>{{ c.citizen_mobile }}</td>
+            <td>{{ c.cat_en }}</td>
+            <td>{{ c.ward_no or '–' }}</td>
+            <td><span class="badge-status s-{{ c.status }}">{{ c.status.replace('_',' ').title() }}</span></td>
+            <td>{{ c.created_at[:10] }}</td>
+            <td><a class="btn-ghost" style="padding:.3rem .7rem" href="{{ url_for('admin_complaint_detail', cid=c.id) }}">பார்</a></td>
+          </tr>
+          {% else %}<tr><td colspan="8" style="color:var(--muted)">புகார்கள் இல்லை.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:10px">{{ rows|length }} result(s)</p>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}செயல்பாடுகள் – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='activities' %}{% include "admin/_sidebar.html" with context %}
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <h2 style="margin:0">செயல்பாடுகள் / Activities</h2>
+      <a class="btn-tvk" href="{{ url_for('activity_new') }}">➕ புதிய செயல்பாடு / Add Activity</a>
+    </div>
+    <div class="gal-grid">
+      {% for a in rows %}
+      <div class="gal-card" style="{{ 'opacity:.55' if a.is_archived }}">
+        <a href="{{ url_for('activity_detail', aid=a.id) }}" class="gal-cardlink">
+          <div class="ph" {% if a.cover %}style="background-image:url('{{ url_for('static', filename=a.cover) }}')"{% endif %}>{% if not a.cover %}TVK{% endif %}</div>
+          <div class="body">
+            <span class="tag">{{ ACTIVITY_LABEL[a.activity_type] }}</span>
+            <div style="font-weight:700;margin-top:8px">{{ a.title }}</div>
+            <div style="color:var(--muted);font-size:.82rem">{{ a.activity_date or a.created_at[:10] }}{% if a.location %} · 📍 {{ a.location }}{% endif %} · @{{ a.username or '–' }}</div>
+          </div>
+        </a>
+        <div class="body" style="padding-top:0">
+          <div class="d-flex gap-2">
+            <a class="btn-ghost" style="flex:1;padding:.35rem;text-align:center" href="{{ url_for('activity_edit', aid=a.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('admin_activity_archive', aid=a.id) }}" style="flex:1">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              {% if a.is_archived %}<input type="hidden" name="restore" value="1"><button class="btn-gold w-100" style="padding:.35rem">Restore</button>
+              {% else %}<button class="btn-ghost w-100" style="padding:.35rem">Hide</button>{% endif %}
+            </form>
+          </div>
+          <form method="post" action="{{ url_for('admin_activity_delete', aid=a.id) }}" class="mt-2"
+                onsubmit="return confirm('Permanently delete this activity and all its photos?')">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="btn-ghost w-100" style="padding:.35rem;color:var(--tvk-red);border-color:#f4b7b4">Delete permanently</button>
+          </form>
+        </div>
+      </div>
+      {% else %}<p class="lead">செயல்பாடுகள் இல்லை.</p>{% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}படத்தொகுப்பு / Activity Gallery – TVK கல்லாவி{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container-narrow">
+    <span class="eyebrow">Gallery</span>
+    <h2>சேவை படத்தொகுப்பு / Activity Gallery</h2>
+    <p class="lead">தொண்டர்கள் மேற்கொண்ட சமூக சேவை செயல்பாடுகள்.</p>
+
+    <div class="gal-search">
+      <input type="search" id="gallerySearch" placeholder="🔍 தேடல் / Search by title, location, keyword…" autocomplete="off">
+    </div>
+
+    <div class="gal-filters" id="galleryFilters">
+      <button class="gal-fbtn active" data-filter="all">அனைத்தும் / All</button>
+      {% for key, en, ta, emo in ACTIVITY_TYPES %}
+      <button class="gal-fbtn" data-filter="{{ key }}">{{ emo }} {{ ta }}</button>
+      {% endfor %}
+    </div>
+
+    <div class="gal-grid" id="galleryGrid">
+      {% for a in items %}
+      <article class="gal-card gal-item"
+               data-type="{{ a.activity_type }}"
+               data-search="{{ (a.title ~ ' ' ~ (a.location or '') ~ ' ' ~ (a.description or '') ~ ' ' ~ ACTIVITY_LABEL[a.activity_type] ~ ' ' ~ ACTIVITY_LABEL_TA[a.activity_type])|lower }}">
+        <a href="{{ url_for('activity_detail', aid=a.id) }}" class="gal-cardlink">
+          <div class="ph" {% if a.cover %}style="background-image:url('{{ url_for('static', filename=a.cover) }}')"{% endif %}>
+            {% if not a.cover %}TVK{% endif %}
+            {% if a.photo_count and a.photo_count > 1 %}<span class="ph-count">📷 {{ a.photo_count }}</span>{% endif %}
+          </div>
+          <div class="body">
+            <span class="tag">{{ ACTIVITY_LABEL_TA[a.activity_type] }} · {{ ACTIVITY_LABEL[a.activity_type] }}</span>
+            <div class="gal-title">{{ a.title }}</div>
+            <div class="gal-meta">📅 {{ a.activity_date or a.created_at[:10] }}{% if a.location %} · 📍 {{ a.location }}{% endif %}</div>
+            {% if a.description %}<p class="gal-desc">{{ a.description }}</p>{% endif %}
+            <span class="gal-view">View Details →</span>
+          </div>
+        </a>
+      </article>
+      {% endfor %}
+    </div>
+
+    <p class="gal-empty" id="galleryEmpty" style="display:none">பொருந்தும் செயல்பாடுகள் இல்லை. / No matching activities.</p>
+    {% if not items %}<p class="lead">இதுவரை செயல்பாடுகள் இல்லை. / No activities yet.</p>{% endif %}
+  </div>
+</section>
+{% endblock %}

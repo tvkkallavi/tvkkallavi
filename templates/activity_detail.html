@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ a.title }} – TVK கல்லாவி{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container-narrow" style="max-width:920px">
+    <a href="{{ url_for('gallery') }}" style="font-size:.9rem">← படத்தொகுப்பு / Gallery</a>
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mt-2">
+      <div>
+        <span class="tag">{{ ACTIVITY_LABEL_TA[a.activity_type] }} · {{ ACTIVITY_LABEL[a.activity_type] }}</span>
+        <h2 style="margin:8px 0 2px">{{ a.title }}</h2>
+      </div>
+      {% if can_edit or can_delete %}
+      <div class="d-flex gap-2">
+        {% if can_edit %}<a class="btn-ghost" href="{{ url_for('activity_edit', aid=a.id) }}">திருத்து / Edit</a>{% endif %}
+        {% if can_delete %}
+        <form method="post" action="{{ url_for('admin_activity_delete', aid=a.id) }}"
+              onsubmit="return confirm('Permanently delete this activity and all its photos?')">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="btn-ghost" style="color:var(--tvk-red);border-color:#f4b7b4">நீக்கு / Delete</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card-tvk p-4 mt-2">
+      <div class="row g-3" style="font-size:.95rem">
+        <div class="col-sm-4"><div style="color:var(--muted);font-size:.8rem">தேதி / Date</div><strong>{{ a.activity_date or a.created_at[:10] }}</strong></div>
+        <div class="col-sm-4"><div style="color:var(--muted);font-size:.8rem">இடம் / Location</div><strong>{{ a.location or '–' }}</strong></div>
+        <div class="col-sm-4"><div style="color:var(--muted);font-size:.8rem">தொண்டர்கள் / Volunteers</div><strong>{{ a.volunteers_participated if a.volunteers_participated is not none else '–' }}</strong></div>
+        {% if a.description %}<div class="col-12"><div style="color:var(--muted);font-size:.8rem">விவரம் / Description</div>{{ a.description }}</div>{% endif %}
+      </div>
+    </div>
+
+    {% if photos %}
+    <h3 style="font-size:1.1rem;margin:22px 0 12px">படத்தொகுப்பு / Photos ({{ photos|length }})</h3>
+    <div class="photo-grid" id="photoGrid">
+      {% for p in photos %}
+      <button class="photo-cell" data-full="{{ url_for('static', filename=p) }}" aria-label="View photo">
+        <img src="{{ url_for('static', filename=p) }}" alt="" loading="lazy">
+      </button>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="lead" style="margin-top:18px">படங்கள் இல்லை. / No photos.</p>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+</div>
+{% endblock %}

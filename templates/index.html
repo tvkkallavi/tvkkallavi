@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block body %}
+
+<section class="hero">
+  <div class="hero-flag" style="background-image:url('{{ url_for('static', filename='img/tvk-flag.jpeg') }}')"></div>
+  <div class="container-narrow">
+    <div class="rise">
+      <span class="eyebrow" style="background:rgba(255,255,255,.15);color:#ffe9c7">கல்லாவி கிராமம் • Pilot</span>
+      <h1>TVK மக்கள் சேவை மையம் – கல்லாவி</h1>
+      <p class="sub">கல்லாவி மக்களின் பிரச்சனைகளை பதிவு செய்து தீர்வு காணும் டிஜிட்டல் சேவை தளம்.</p>
+      <div class="hero-cta">
+        <a class="btn-gold" href="{{ url_for('login') }}">தொண்டர் உள்நுழைவு</a>
+        <a class="btn-ghost" href="{{ url_for('track') }}" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);color:#fff">புகார் கண்காணிப்பு</a>
+      </div>
+    </div>
+    <div class="hero-portrait rise-2" role="img" aria-label="தலைவர்"
+         style="background-image:url('{{ url_for('static', filename='img/vijay.jpeg') }}')"></div>
+  </div>
+</section>
+
+<!-- Statistics -->
+<section class="section">
+  <div class="container-narrow">
+    <span class="eyebrow">புகார் புள்ளிவிவரம்</span>
+    <h2>மக்கள் சேவை எண்ணிக்கை</h2>
+    <p class="lead">Live complaint statistics across Kallavi village.</p>
+    <div class="stat-grid">
+      <div class="stat red"><div class="num" data-count="{{ counts.total }}">0</div><div class="lbl">மொத்த புகார்கள் / Total</div></div>
+      <div class="stat amber"><div class="num" data-count="{{ counts.pending }}">0</div><div class="lbl">நிலுவையில் / Pending</div></div>
+      <div class="stat"><div class="num" data-count="{{ counts.in_progress }}">0</div><div class="lbl">செயல்பாட்டில் / In Progress</div></div>
+      <div class="stat green"><div class="num" data-count="{{ counts.resolved }}">0</div><div class="lbl">தீர்க்கப்பட்டது / Resolved</div></div>
+      <div class="stat gray"><div class="num" data-count="{{ counts.closed }}">0</div><div class="lbl">முடிக்கப்பட்டது / Closed</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Service statistics -->
+<section class="section" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="container-narrow">
+    <span class="eyebrow">சமூக சேவை</span>
+    <h2>சேவை செயல்பாடுகள்</h2>
+    <p class="lead">Community service carried out by our volunteers.</p>
+    <div class="svc-grid">
+      <div class="svc"><div class="ic">🎯</div><div class="num" data-count="{{ service_counts.values()|sum }}">0</div><div class="lbl">மொத்த சேவைகள் / Total</div></div>
+      {% for key, en, ta, emo in ACTIVITY_TYPES %}
+      <div class="svc"><div class="ic">{{ emo }}</div><div class="num" data-count="{{ service_counts[key] }}">0</div><div class="lbl">{{ ta }} / {{ en }}</div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Recent activities -->
+<section class="section">
+  <div class="container-narrow">
+    <div class="d-flex justify-content-between align-items-end">
+      <div><span class="eyebrow">சமீபத்திய</span><h2>சமீபத்திய சேவை செயல்பாடுகள்</h2></div>
+      <a class="btn-ghost" href="{{ url_for('gallery') }}">View All Activities →</a>
+    </div>
+    <div class="gal-grid" style="margin-top:18px">
+      {% for a in recent %}
+      <article class="gal-card">
+        <a href="{{ url_for('activity_detail', aid=a.id) }}" class="gal-cardlink">
+          <div class="ph" {% if a.cover %}style="background-image:url('{{ url_for('static', filename=a.cover) }}')"{% endif %}>{% if not a.cover %}TVK{% endif %}</div>
+          <div class="body">
+            <span class="tag">{{ ACTIVITY_LABEL_TA[a.activity_type] }} · {{ ACTIVITY_LABEL[a.activity_type] }}</span>
+            <div class="gal-title">{{ a.title }}</div>
+            <div class="gal-meta">📅 {{ a.activity_date or a.created_at[:10] }}{% if a.location %} · 📍 {{ a.location }}{% endif %}</div>
+          </div>
+        </a>
+      </article>
+      {% else %}
+        <p class="lead">இதுவரை செயல்பாடுகள் இல்லை. / No activities yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section class="section" style="background:#fff;border-top:1px solid var(--line)">
+  <div class="container-narrow" style="max-width:820px">
+    <span class="eyebrow">எங்களை பற்றி</span>
+    <h2>இந்த தளத்தின் நோக்கம்</h2>
+    <p style="color:var(--muted)">கல்லாவி கிராம மக்களின் அன்றாட பிரச்சனைகளை — குடிநீர், சாலை, தெரு விளக்கு, வடிகால், சுகாதாரம் உள்ளிட்டவை — எளிதாக பதிவு செய்து, அவற்றின் தீர்வை வெளிப்படையாக கண்காணிக்க உருவாக்கப்பட்ட டிஜிட்டல் தளம் இது.</p>
+    <p style="color:var(--muted)">This platform lets TVK volunteers register citizen grievances, attach photo evidence, and track each issue transparently from <em>pending</em> to <em>resolved</em>. Every citizen receives a tracking ID to follow their complaint's progress.</p>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section">
+  <div class="container-narrow">
+    <span class="eyebrow">தொடர்பு</span>
+    <h2>எங்களை தொடர்பு கொள்ள</h2>
+    <div class="row g-3" style="margin-top:8px">
+      <div class="col-md-4"><div class="card-tvk p-4"><div style="font-size:1.4rem">📞</div><div style="font-weight:700;margin-top:6px">தொலைபேசி</div><div style="color:var(--muted)">{{ site.contact_number or 'விரைவில் / Coming soon' }}</div></div></div>
+      <div class="col-md-4"><div class="card-tvk p-4"><div style="font-size:1.4rem">✉️</div><div style="font-weight:700;margin-top:6px">மின்னஞ்சல்</div><div style="color:var(--muted)">{{ site.contact_email or 'விரைவில் / Coming soon' }}</div></div></div>
+      <div class="col-md-4"><div class="card-tvk p-4"><div style="font-size:1.4rem">📍</div><div style="font-weight:700;margin-top:6px">முகவரி</div><div style="color:var(--muted)">{{ site.contact_address }}</div></div></div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

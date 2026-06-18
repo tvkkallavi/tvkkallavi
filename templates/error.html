@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="section">
+  <div class="container-narrow text-center" style="max-width:520px">
+    <div style="font-size:4rem;font-weight:800;color:var(--tvk-red)">{{ code }}</div>
+    <p class="lead">{{ msg }}</p>
+    <a class="btn-tvk" href="{{ url_for('index') }}">முகப்புக்கு / Home</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}நிர்வாக டாஷ்போர்டு – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% include "admin/_sidebar.html" with context %}
+  <main class="content">
+    <h2 style="margin:0 0 4px">நிர்வாக டாஷ்போர்டு</h2>
+    <p style="color:var(--muted)">Welcome, {{ current_user.username }}.</p>
+
+    <div class="stat-grid" style="margin-bottom:22px">
+      <div class="stat red"><div class="num">{{ counts.total }}</div><div class="lbl">மொத்தம் / Total</div></div>
+      <div class="stat amber"><div class="num">{{ counts.pending }}</div><div class="lbl">நிலுவை / Pending</div></div>
+      <div class="stat"><div class="num">{{ counts.in_progress }}</div><div class="lbl">செயல்பாட்டில் / In Progress</div></div>
+      <div class="stat green"><div class="num">{{ counts.resolved }}</div><div class="lbl">தீர்வு / Resolved</div></div>
+      <div class="stat gray"><div class="num">{{ counts.closed }}</div><div class="lbl">முடிவு / Closed</div></div>
+      <div class="stat"><div class="num">{{ counts.rejected }}</div><div class="lbl">நிராகரிப்பு / Rejected</div></div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-lg-6"><div class="card-tvk p-4"><h3 style="font-size:1.05rem">வகை வாரியாக / By Category</h3><canvas id="catChart" height="160"></canvas></div></div>
+      <div class="col-lg-6"><div class="card-tvk p-4"><h3 style="font-size:1.05rem">மாதவாரியாக / Monthly</h3><canvas id="monChart" height="160"></canvas></div></div>
+    </div>
+
+    <div class="card-tvk p-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 style="font-size:1.05rem;margin:0">சமீபத்திய புகார்கள் / Recent</h3>
+        <a class="btn-ghost" href="{{ url_for('admin_complaints') }}">அனைத்தும் →</a>
+      </div>
+      <div style="overflow-x:auto">
+      <table class="table-tvk">
+        <thead><tr><th>Tracking ID</th><th>Citizen</th><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+          {% for c in recent %}
+          <tr style="cursor:pointer" onclick="location.href='{{ url_for('admin_complaint_detail', cid=c.id) }}'">
+            <td><strong>{{ c.tracking_id }}</strong></td>
+            <td>{{ c.citizen_name }}</td>
+            <td>{{ c.cat_en }}</td>
+            <td><span class="badge-status s-{{ c.status }}">{{ c.status.replace('_',' ').title() }}</span></td>
+            <td>{{ c.created_at[:10] }}</td>
+          </tr>
+          {% else %}<tr><td colspan="5" style="color:var(--muted)">இதுவரை புகார் இல்லை.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+const RED='#C1121C', GOLD='#F9B400';
+new Chart(document.getElementById('catChart'),{type:'bar',
+  data:{labels:{{ by_cat|map(attribute='label')|list|tojson }},
+        datasets:[{label:'Complaints',data:{{ by_cat|map(attribute='n')|list|tojson }},backgroundColor:RED,borderRadius:6}]},
+  options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+new Chart(document.getElementById('monChart'),{type:'line',
+  data:{labels:{{ by_month|map(attribute='label')|list|tojson }},
+        datasets:[{label:'Complaints',data:{{ by_month|map(attribute='n')|list|tojson }},borderColor:GOLD,backgroundColor:'rgba(249,180,0,.18)',fill:true,tension:.35,pointBackgroundColor:RED}]},
+  options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+</script>
+{% endblock %}

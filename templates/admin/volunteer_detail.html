@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ v.full_name }} – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='volunteers' %}{% include "admin/_sidebar.html" with context %}
+  <main class="content">
+    <a href="{{ url_for('admin_volunteers') }}" style="font-size:.9rem">← தொண்டர்கள்</a>
+
+    <div class="card-tvk p-4 mt-2">
+      <div class="d-flex gap-3 align-items-center flex-wrap">
+        {% if v.profile_photo %}<img src="{{ url_for('static', filename=v.profile_photo) }}" style="width:84px;height:84px;border-radius:16px;object-fit:cover;border:2px solid var(--tvk-gold)">
+        {% else %}<div style="width:84px;height:84px;border-radius:16px;background:#fbeceb;display:grid;place-items:center;font-size:2rem;color:var(--tvk-red)">👤</div>{% endif %}
+        <div style="flex:1">
+          <h2 style="margin:0">{{ v.full_name }}</h2>
+          <span style="color:var(--muted)">{{ v.volunteer_code }} · @{{ v.username }}</span>
+          <div class="mt-1"><span class="badge-status {{ 's-resolved' if v.is_active else 's-rejected' }}">{{ 'Active' if v.is_active else 'Inactive' }}</span></div>
+        </div>
+        <form method="post" action="{{ url_for('admin_volunteer_toggle', vid=v.id) }}" data-confirm="Change active status?">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="btn-ghost">{{ 'Deactivate' if v.is_active else 'Activate' }}</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="stat-grid mt-3" style="margin-bottom:16px">
+      <div class="stat red"><div class="num">{{ stats.total_complaints if stats else 0 }}</div><div class="lbl">Complaints</div></div>
+      <div class="stat amber"><div class="num">{{ stats.pending_complaints if stats else 0 }}</div><div class="lbl">Pending</div></div>
+      <div class="stat green"><div class="num">{{ stats.resolved_complaints if stats else 0 }}</div><div class="lbl">Resolved</div></div>
+      <div class="stat"><div class="num">{{ stats.total_activities if stats else 0 }}</div><div class="lbl">Activities</div></div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-7">
+        <div class="card-tvk p-4">
+          <h3 style="font-size:1.05rem">விவரம் / Profile</h3>
+          <div class="row g-2" style="font-size:.92rem">
+            {% macro field(l,val) %}<div class="col-sm-6"><span style="color:var(--muted)">{{ l }}:</span> {{ val or '–' }}</div>{% endmacro %}
+            {{ field('Mobile', v.mobile) }}{{ field('Alt Mobile', v.alt_mobile) }}
+            {{ field('Email', v.email) }}{{ field('DOB', v.dob) }}
+            {{ field('Gender', v.gender) }}{{ field('Blood Group', v.blood_group) }}
+            {{ field('Address', (v.door_no ~ ' ' ~ (v.street or '')) ) }}{{ field('Area', v.area) }}
+            {{ field('Ward', v.ward_no) }}{{ field('Pincode', v.pincode) }}
+            {{ field('Village', v.village) }}{{ field('Joining', v.joining_date) }}
+            {{ field('Assigned Ward', v.assigned_ward) }}{{ field('Assigned Street', v.assigned_street) }}
+            {{ field('Registered', v.registration_date[:10] if v.registration_date) }}{{ field('Last Login', v.last_login[:16] if v.last_login else 'Never') }}
+          </div>
+          {% if v.notes %}<div class="mt-2" style="color:var(--muted)"><strong>Notes:</strong> {{ v.notes }}</div>{% endif %}
+
+          <hr>
+          <h3 style="font-size:1.05rem">அடையாளம் (ரகசியம்) / Identity (Sensitive)</h3>
+          <div class="row g-2" style="font-size:.92rem">
+            {{ field('Aadhaar', v.aadhaar_number) }}{{ field('Voter ID', v.voter_id_number) }}
+          </div>
+          <div class="d-flex gap-2 mt-2">
+            {% if v.aadhaar_doc %}<a class="btn-ghost" style="padding:.3rem .8rem" href="{{ url_for('static', filename=v.aadhaar_doc) }}" target="_blank">Aadhaar Doc</a>{% endif %}
+            {% if v.voter_id_doc %}<a class="btn-ghost" style="padding:.3rem .8rem" href="{{ url_for('static', filename=v.voter_id_doc) }}" target="_blank">Voter Doc</a>{% endif %}
+          </div>
+
+          <hr>
+          <h3 style="font-size:1.05rem">அவசர தொடர்பு / Emergency</h3>
+          <div style="font-size:.92rem">{{ v.emergency_contact_name or '–' }}
+            {% if v.emergency_contact_relation %}({{ v.emergency_contact_relation }}){% endif %}
+            {% if v.emergency_contact_mobile %}· {{ v.emergency_contact_mobile }}{% endif %}</div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card-tvk p-4">
+          <h3 style="font-size:1.05rem">கடவுச்சொல் மீட்டமை / Reset Password</h3>
+          <form method="post" action="{{ url_for('admin_volunteer_reset', vid=v.id) }}" data-confirm="Reset this volunteer's password?">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <div class="mb-2"><input class="form-control" name="new_password" placeholder="New password" required></div>
+            <button class="btn-gold w-100">மீட்டமை / Reset</button>
+          </form>
+        </div>
+        <div class="card-tvk p-4 mt-3">
+          <h3 style="font-size:1.05rem">சமீபத்திய புகார்கள்</h3>
+          <table class="table-tvk">
+            <tbody>
+              {% for c in recent %}
+              <tr onclick="location.href='{{ url_for('admin_complaint_detail', cid=c.id) }}'" style="cursor:pointer">
+                <td><strong>{{ c.tracking_id }}</strong><br><span style="color:var(--muted);font-size:.8rem">{{ c.cat_en }}</span></td>
+                <td><span class="badge-status s-{{ c.status }}">{{ c.status.replace('_',' ').title() }}</span></td>
+              </tr>
+              {% else %}<tr><td style="color:var(--muted)">None yet.</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+tvkkallavi.db
+tvkkallavi.db-wal
+tvkkallavi.db-shm
+.env
+venv/
+.venv/

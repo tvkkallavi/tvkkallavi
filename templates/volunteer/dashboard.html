@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}தொண்டர் டாஷ்போர்டு – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='dash' %}{% include "volunteer/_sidebar.html" with context %}
+  <main class="content">
+    <h2 style="margin:0 0 4px">வணக்கம், {{ v.full_name if v else current_user.username }}!</h2>
+    <p style="color:var(--muted)">{{ v.volunteer_code if v }} · Last login: {{ current_user.last_login[:16] if current_user.last_login else '–' }}</p>
+
+    <div class="stat-grid" style="margin:14px 0 22px">
+      <div class="stat red"><div class="num">{{ stats.total_complaints if stats else 0 }}</div><div class="lbl">மொத்த புகார்கள்</div></div>
+      <div class="stat amber"><div class="num">{{ stats.pending_complaints if stats else 0 }}</div><div class="lbl">நிலுவை</div></div>
+      <div class="stat green"><div class="num">{{ stats.resolved_complaints if stats else 0 }}</div><div class="lbl">தீர்வு</div></div>
+      <div class="stat"><div class="num">{{ stats.total_activities if stats else 0 }}</div><div class="lbl">சேவை செயல்பாடு</div></div>
+    </div>
+
+    <div class="d-flex gap-2 mb-3 flex-wrap">
+      <a class="btn-tvk" href="{{ url_for('vol_complaint_new') }}">➕ புகார் பதிவு</a>
+      <a class="btn-gold" href="{{ url_for('activity_new') }}">🤝 சேவை பதிவு</a>
+    </div>
+
+    <div class="card-tvk p-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 style="font-size:1.05rem;margin:0">என் சமீபத்திய புகார்கள்</h3>
+        <a class="btn-ghost" href="{{ url_for('vol_complaints') }}">அனைத்தும் →</a>
+      </div>
+      <table class="table-tvk">
+        <thead><tr><th>Tracking ID</th><th>Citizen</th><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+          {% for c in recent %}
+          <tr><td><strong>{{ c.tracking_id }}</strong></td><td>{{ c.citizen_name }}</td><td>{{ c.cat_en }}</td>
+            <td><span class="badge-status s-{{ c.status }}">{{ c.status.replace('_',' ').title() }}</span></td><td>{{ c.created_at[:10] }}</td></tr>
+          {% else %}<tr><td colspan="5" style="color:var(--muted)">இதுவரை புகார் இல்லை.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+{% endblock %}

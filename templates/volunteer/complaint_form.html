@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}புகார் பதிவு – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='new' %}{% include "volunteer/_sidebar.html" with context %}
+  <main class="content">
+    <h2 style="margin:0 0 14px">புகார் பதிவு / Register Complaint</h2>
+    <form method="post" enctype="multipart/form-data" class="form-card">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">குடிமகன் பெயர் / Citizen Name <span class="req">*</span></label><input class="form-control" name="citizen_name" required></div>
+        <div class="col-md-6"><label class="form-label">கைபேசி / Mobile <span class="req">*</span></label><input class="form-control" name="citizen_mobile" required></div>
+        <div class="col-md-8"><label class="form-label">முகவரி / Address <span class="req">*</span></label><input class="form-control" name="address" required></div>
+        <div class="col-md-4"><label class="form-label">தெரு / Street</label><input class="form-control" name="street"></div>
+        <div class="col-md-4"><label class="form-label">அடையாளம் / Landmark</label><input class="form-control" name="landmark"></div>
+        <div class="col-md-2"><label class="form-label">வார்டு / Ward</label><input class="form-control" name="ward_no"></div>
+        <div class="col-md-6"><label class="form-label">வகை / Category <span class="req">*</span></label>
+          <select class="form-select" name="category_id" required>
+            <option value="">தேர்வு / Select</option>
+            {% for c in cats %}<option value="{{ c.id }}">{{ c.name_ta }} · {{ c.name_en }}</option>{% endfor %}
+          </select></div>
+        <div class="col-12"><label class="form-label">விவரம் / Description <span class="req">*</span></label><textarea class="form-control" name="description" rows="3" required></textarea></div>
+        <div class="col-md-6"><label class="form-label">புகைப்படம் / Photo (before)</label><input class="form-control" type="file" name="before_photo" accept="image/*"></div>
+      </div>
+      <button class="btn-tvk mt-3">புகார் பதிவு / Submit</button>
+    </form>
+  </main>
+</div>
+{% endblock %}

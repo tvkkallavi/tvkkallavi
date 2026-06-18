@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}புதிய தொண்டர் – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='volunteers' %}{% include "admin/_sidebar.html" with context %}
+  <main class="content">
+    <a href="{{ url_for('admin_volunteers') }}" style="font-size:.9rem">← தொண்டர்கள்</a>
+    <h2 style="margin:6px 0 14px">புதிய தொண்டர் / New Volunteer</h2>
+
+    <form method="post" enctype="multipart/form-data" class="form-card">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+
+      <h3 style="font-size:1rem;color:var(--tvk-red)">கணக்கு / Login</h3>
+      <div class="row g-3 mb-2">
+        <div class="col-md-4"><label class="form-label">Username <span class="req">*</span></label><input class="form-control" name="username" required></div>
+        <div class="col-md-4"><label class="form-label">Password <span class="req">*</span></label><input class="form-control" name="password" required></div>
+        <div class="col-md-4"><label class="form-label">Status</label>
+          <select class="form-select" name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+      </div>
+
+      <hr><h3 style="font-size:1rem;color:var(--tvk-red)">தனிப்பட்ட விவரம் / Personal</h3>
+      <div class="row g-3 mb-2">
+        <div class="col-md-6"><label class="form-label">Full Name <span class="req">*</span></label><input class="form-control" name="full_name" required></div>
+        <div class="col-md-3"><label class="form-label">Mobile <span class="req">*</span></label><input class="form-control" name="mobile" required></div>
+        <div class="col-md-3"><label class="form-label">Alt. Mobile</label><input class="form-control" name="alt_mobile"></div>
+        <div class="col-md-4"><label class="form-label">Email</label><input class="form-control" type="email" name="email"></div>
+        <div class="col-md-2"><label class="form-label">DOB</label><input class="form-control" type="date" name="dob"></div>
+        <div class="col-md-2"><label class="form-label">Gender</label>
+          <select class="form-select" name="gender"><option value="">–</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+        <div class="col-md-2"><label class="form-label">Blood Group</label><input class="form-control" name="blood_group"></div>
+        <div class="col-md-2"><label class="form-label">Photo</label><input class="form-control" type="file" name="profile_photo" accept="image/*"></div>
+      </div>
+
+      <hr><h3 style="font-size:1rem;color:var(--tvk-red)">முகவரி / Address</h3>
+      <div class="row g-3 mb-2">
+        <div class="col-md-2"><label class="form-label">Door No</label><input class="form-control" name="door_no"></div>
+        <div class="col-md-4"><label class="form-label">Street</label><input class="form-control" name="street"></div>
+        <div class="col-md-3"><label class="form-label">Area</label><input class="form-control" name="area"></div>
+        <div class="col-md-1"><label class="form-label">Ward</label><input class="form-control" name="ward_no"></div>
+        <div class="col-md-2"><label class="form-label">Pincode</label><input class="form-control" name="pincode"></div>
+      </div>
+
+      <hr><h3 style="font-size:1rem;color:var(--tvk-red)">அடையாளம் (நிர்வாகி மட்டும்) / Identity (Admin only)</h3>
+      <div class="row g-3 mb-2">
+        <div class="col-md-3"><label class="form-label">Aadhaar No</label><input class="form-control" name="aadhaar_number"></div>
+        <div class="col-md-3"><label class="form-label">Aadhaar Doc</label><input class="form-control" type="file" name="aadhaar_doc"></div>
+        <div class="col-md-3"><label class="form-label">Voter ID No</label><input class="form-control" name="voter_id_number"></div>
+        <div class="col-md-3"><label class="form-label">Voter ID Doc</label><input class="form-control" type="file" name="voter_id_doc"></div>
+      </div>
+
+      <hr><h3 style="font-size:1rem;color:var(--tvk-red)">அமைப்பு / Organization</h3>
+      <div class="row g-3 mb-2">
+        <div class="col-md-3"><label class="form-label">Joining Date</label><input class="form-control" type="date" name="joining_date"></div>
+        <div class="col-md-3"><label class="form-label">Assigned Ward</label><input class="form-control" name="assigned_ward"></div>
+        <div class="col-md-3"><label class="form-label">Assigned Street</label><input class="form-control" name="assigned_street"></div>
+        <div class="col-md-12"><label class="form-label">Notes</label><textarea class="form-control" name="notes" rows="2"></textarea></div>
+      </div>
+
+      <hr><h3 style="font-size:1rem;color:var(--tvk-red)">அவசர தொடர்பு / Emergency Contact</h3>
+      <div class="row g-3 mb-3">
+        <div class="col-md-4"><label class="form-label">Name</label><input class="form-control" name="emergency_contact_name"></div>
+        <div class="col-md-4"><label class="form-label">Relationship</label><input class="form-control" name="emergency_contact_relation"></div>
+        <div class="col-md-4"><label class="form-label">Mobile</label><input class="form-control" name="emergency_contact_mobile"></div>
+      </div>
+
+      <button class="btn-tvk">தொண்டரை உருவாக்கு / Create Volunteer</button>
+    </form>
+  </main>
+</div>
+{% endblock %}

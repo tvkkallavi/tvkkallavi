@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}புகார் கண்காணிப்பு – TVK கல்லாவி{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container-narrow" style="max-width:760px">
+    <span class="eyebrow">Track</span>
+    <h2>புகார் கண்காணிப்பு</h2>
+    <p class="lead">உங்கள் கண்காணிப்பு எண்ணை உள்ளிட்டு புகாரின் நிலையை அறியவும்.</p>
+    <div class="form-card">
+      <form method="post" class="d-flex gap-2 flex-wrap">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input class="form-control" style="flex:1;min-width:220px" name="tracking_id"
+               placeholder="TVK-KAL-2026-0001" value="{{ request.form.tracking_id or '' }}" required>
+        <button class="btn-tvk">கண்காணி / Track</button>
+      </form>
+    </div>
+
+    {% if searched and not complaint %}
+      <div class="flash danger" style="margin-top:18px">இந்த எண்ணில் புகார் கிடைக்கவில்லை. / No complaint found for that ID.</div>
+    {% endif %}
+
+    {% if complaint %}
+    <div class="card-tvk p-4" style="margin-top:18px">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <div style="font-size:.8rem;color:var(--muted)">கண்காணிப்பு எண்</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--tvk-red)">{{ complaint.tracking_id }}</div>
+        </div>
+        <span class="badge-status s-{{ complaint.status }}">{{ complaint.status.replace('_',' ').title() }}</span>
+      </div>
+      <hr>
+      <div class="row g-3">
+        <div class="col-sm-6"><div style="color:var(--muted);font-size:.82rem">வகை / Category</div><strong>{{ complaint.cat_ta }} · {{ complaint.cat_en }}</strong></div>
+        <div class="col-sm-6"><div style="color:var(--muted);font-size:.82rem">பதிவு தேதி / Registered</div><strong>{{ complaint.created_at[:10] }}</strong></div>
+        <div class="col-12"><div style="color:var(--muted);font-size:.82rem">விவரம் / Description</div>{{ complaint.description }}</div>
+      </div>
+
+      {% if photos.before or photos.after %}
+      <div class="row g-3 mt-1">
+        {% if photos.before %}<div class="col-sm-6"><div style="color:var(--muted);font-size:.82rem;margin-bottom:6px">முன் / Before</div><img src="{{ url_for('static', filename=photos.before[0]) }}" style="width:100%;border-radius:12px"></div>{% endif %}
+        {% if photos.after %}<div class="col-sm-6"><div style="color:var(--muted);font-size:.82rem;margin-bottom:6px">பின் / After</div><img src="{{ url_for('static', filename=photos.after[0]) }}" style="width:100%;border-radius:12px"></div>{% endif %}
+      </div>
+      {% endif %}
+
+      {% if complaint.resolution_remarks %}
+        <div class="flash success" style="margin-top:16px"><strong>தீர்வு குறிப்பு:</strong> {{ complaint.resolution_remarks }}</div>
+      {% endif %}
+
+      <h3 style="font-size:1.05rem;margin:18px 0 12px">நிலை வரலாறு / Status Timeline</h3>
+      <ul class="timeline">
+        {% for h in history %}
+        <li class="{{ 'done' if h.new_status in ['resolved','closed'] }}">
+          <strong>{{ h.new_status.replace('_',' ').title() }}</strong>
+          <span style="color:var(--muted);font-size:.84rem"> · {{ h.created_at[:16] }}</span>
+          {% if h.remarks %}<div style="color:var(--muted);font-size:.88rem">{{ h.remarks }}</div>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,7 @@
+<aside class="sidebar">
+  <a class="side-link {{ 'active' if active=='dash' }}" href="{{ url_for('admin_dashboard') }}">📊 டாஷ்போர்டு</a>
+  <a class="side-link {{ 'active' if active=='complaints' }}" href="{{ url_for('admin_complaints') }}">📋 புகார்கள்</a>
+  <a class="side-link {{ 'active' if active=='volunteers' }}" href="{{ url_for('admin_volunteers') }}">👥 தொண்டர்கள்</a>
+  <a class="side-link {{ 'active' if active=='activities' }}" href="{{ url_for('admin_activities') }}">🖼️ செயல்பாடுகள்</a>
+  <a class="side-link" href="{{ url_for('track') }}">🔎 கண்காணிப்பு</a>
+</aside>

@@ -1,0 +1,6 @@
+<aside class="sidebar">
+  <a class="side-link {{ 'active' if active=='dash' }}" href="{{ url_for('vol_dashboard') }}">📊 டாஷ்போர்டு</a>
+  <a class="side-link {{ 'active' if active=='new' }}" href="{{ url_for('vol_complaint_new') }}">➕ புகார் பதிவு</a>
+  <a class="side-link {{ 'active' if active=='mine' }}" href="{{ url_for('vol_complaints') }}">📋 என் புகார்கள்</a>
+  <a class="side-link {{ 'active' if active=='activity' }}" href="{{ url_for('activity_new') }}">🤝 சேவை பதிவு</a>
+</aside>

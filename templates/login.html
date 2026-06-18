@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}உள்நுழைவு – TVK கல்லாவி{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container-narrow" style="max-width:440px">
+    <div class="form-card rise">
+      <div class="text-center mb-3">
+        <img src="{{ url_for('static', filename='img/tvk-flag.jpeg') }}" style="width:64px;height:64px;border-radius:14px;object-fit:cover;border:2px solid var(--tvk-gold)">
+        <h2 style="margin:14px 0 2px">உள்நுழைவு</h2>
+        <p style="color:var(--muted);margin:0">Admin & Volunteer Login</p>
+      </div>
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <div class="mb-3">
+          <label class="form-label">பயனர்பெயர் / Username <span class="req">*</span></label>
+          <input class="form-control" name="username" required autofocus>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">கடவுச்சொல் / Password <span class="req">*</span></label>
+          <input class="form-control" type="password" name="password" required>
+        </div>
+        <button class="btn-tvk w-100">உள்நுழைய</button>
+      </form>
+      <p style="color:var(--muted);font-size:.82rem;text-align:center;margin:16px 0 0">
+        தொண்டர் கணக்குகளை நிர்வாகி மட்டுமே உருவாக்க முடியும்.<br>Volunteer accounts are created by the admin only.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

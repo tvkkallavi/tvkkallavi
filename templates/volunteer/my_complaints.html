@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}என் புகார்கள் – TVK கல்லாவி{% endblock %}
+{% block body %}
+<div class="shell">
+  {% set active='mine' %}{% include "volunteer/_sidebar.html" with context %}
+  <main class="content">
+    <h2 style="margin:0 0 12px">என் புகார்கள் / My Complaints</h2>
+    <form class="card-tvk p-3 mb-3" method="get">
+      <div class="d-flex gap-2"><input class="form-control" name="q" value="{{ q }}" placeholder="Tracking ID தேடல்"><button class="btn-tvk">தேடு</button></div>
+    </form>
+    <div class="card-tvk p-0" style="overflow-x:auto">
+      <table class="table-tvk">
+        <thead><tr><th>Tracking ID</th><th>Citizen</th><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+          {% for c in rows %}
+          <tr><td><strong>{{ c.tracking_id }}</strong></td><td>{{ c.citizen_name }}</td><td>{{ c.cat_en }}</td>
+            <td><span class="badge-status s-{{ c.status }}">{{ c.status.replace('_',' ').title() }}</span></td><td>{{ c.created_at[:10] }}</td></tr>
+          {% else %}<tr><td colspan="5" style="color:var(--muted)">புகார்கள் இல்லை.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+{% endblock %}
