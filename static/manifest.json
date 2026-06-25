@@ -1,0 +1,28 @@
+{
+  "name": "TVK மக்கள் சேவை மையம் – கல்லாவி",
+  "short_name": "TVK Kallavi",
+  "description": "கல்லாவி ஊராட்சி மக்களின் பிரச்சனைகளை பதிவு செய்து தீர்வு காணும் டிஜிட்டல் சேவை தளம்.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#C1121C",
+  "lang": "ta",
+  "dir": "ltr",
+  "categories": ["government", "social"],
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

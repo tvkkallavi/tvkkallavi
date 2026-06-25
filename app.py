@@ -203,6 +203,15 @@ def index():
     return render_template("index.html", counts=counts, service_counts=service_counts, recent=recent)
 
 
+@app.route("/sw.js")
+def service_worker():
+    resp = send_from_directory(os.path.join(BASE_DIR, "static"), "sw.js")
+    resp.headers["Service-Worker-Allowed"] = "/"
+    resp.headers["Cache-Control"] = "no-cache"
+    resp.headers["Content-Type"] = "application/javascript"
+    return resp
+
+
 @app.route("/track", methods=["GET", "POST"])
 def track():
     complaint = None
