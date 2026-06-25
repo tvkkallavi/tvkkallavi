@@ -48,16 +48,25 @@
   {% block body %}{% endblock %}
 
   <footer class="tvk-foot">
-    <div class="container-narrow d-flex flex-wrap justify-content-between gap-3">
-      <div>
-        <strong>TVK மக்கள் சேவை மையம் – கல்லாவி</strong><br>
-        <span style="opacity:.8">{{ site.tagline }}</span>
+    <div class="container-narrow foot-top">
+      <div class="foot-brand">
+        <strong>TVK மக்கள் சேவை மையம் – கல்லாவி</strong>
+        <span class="foot-brand-en">TVK People's Service Center – Kallavi</span>
+        <span class="foot-tagline">{{ site.tagline }}</span>
       </div>
-      <div style="opacity:.85">
-        {% if site.contact_number %}📞 {{ site.contact_number }}<br>{% endif %}
-        {% if site.contact_email %}✉ {{ site.contact_email }}<br>{% endif %}
-        📍 {{ site.contact_address }}
+      <div class="foot-contact">
+        {% if site.contact_number %}<span>📞 {{ site.contact_number }}</span>{% endif %}
+        {% if site.contact_email %}<span>✉ {{ site.contact_email }}</span>{% endif %}
+        <span>📍 {{ site.contact_address }}</span>
       </div>
+    </div>
+
+    <div class="foot-divider"></div>
+
+    <div class="container-narrow foot-credit">
+      <div class="credit-label">வடிவமைத்து உருவாக்கியவர் · Designed &amp; Developed by</div>
+      <div class="credit-name">பிரவீன் பாலமுருகன் — Praveen Balamurugan</div>
+      <div class="credit-copy">© 2026 அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை. · © 2026 All Rights Reserved.</div>
     </div>
   </footer>
 
